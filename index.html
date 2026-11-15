@@ -1,0 +1,785 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#1C2B27">
+<title>文明七日修习 · 修身打卡</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow-x:hidden}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:#FAF7F0;color:#1C2B27;font-size:15px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+.serif{font-family:"Songti SC","SimSun","STSong",serif}
+#app{width:100%;max-width:480px;margin:0 auto;min-height:100%;padding-bottom:76px;position:relative;overflow-x:hidden}
+
+/* ---------- 顶部 ---------- */
+.topbar{position:sticky;top:0;z-index:30;background:rgba(250,247,240,.94);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(28,43,39,.06)}
+.brand{font-size:15px;letter-spacing:.16em;color:#2E6E62;font-weight:600}
+.brand small{display:block;font-size:9px;letter-spacing:.28em;color:#9AA7A2;font-weight:400;margin-top:2px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:#1C2B27;color:#F3EEE2;
+  border-radius:20px;padding:5px 12px;font-size:12px;letter-spacing:.04em}
+.chip b{font-size:14px;color:#E4C489;font-weight:600}
+
+/* ---------- 通用 ---------- */
+.pad{padding:0 20px}
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 24px rgba(28,43,39,.06);
+  border:1px solid rgba(28,43,39,.04)}
+.sec-title{font-size:12px;letter-spacing:.22em;color:#9AA7A2;margin:26px 0 12px;font-weight:600}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:15px;font-size:15px;
+  font-family:inherit;font-weight:600;letter-spacing:.06em;cursor:pointer;
+  background:#2E6E62;color:#fff;transition:transform .12s ease,opacity .2s;margin-top:14px}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:transparent;color:#2E6E62;border:1px solid rgba(46,110,98,.35)}
+.btn.gold{background:#C8A063;color:#231a0b}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.muted{color:#8A9793;font-size:13px}
+.hr{height:1px;background:rgba(28,43,39,.07);margin:16px 0}
+
+/* ---------- 首页 ---------- */
+.hero{padding:26px 20px 6px;position:relative}
+.hero .kicker{font-size:10px;letter-spacing:.3em;color:#C8A063;font-weight:600}
+.hero h1{font-size:31px;line-height:1.28;letter-spacing:.04em;margin:10px 0 6px;font-weight:700}
+.hero h1 em{font-style:normal;color:#2E6E62}
+.hero p{font-size:13px;color:#7C8A85;letter-spacing:.02em}
+.ringbox{display:flex;align-items:center;gap:18px;margin-top:18px}
+.ring{width:92px;height:92px;flex:0 0 92px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute;left:0;top:0;width:92px;height:92px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center}
+.ring .num b{font-size:22px;line-height:1;color:#1C2B27}
+.ring .num span{font-size:9px;color:#9AA7A2;letter-spacing:.12em;margin-top:4px}
+.today{flex:1}
+.today .lab{font-size:11px;letter-spacing:.18em;color:#9AA7A2}
+.today .tt{font-size:17px;font-weight:600;margin:4px 0 6px}
+.today .ds{font-size:12.5px;color:#7C8A85;line-height:1.55}
+
+/* ---------- 七日地图 ---------- */
+.daycard{display:flex;gap:14px;align-items:center;background:#fff;border-radius:16px;
+  padding:15px 16px;margin-bottom:11px;border:1px solid rgba(28,43,39,.05);
+  box-shadow:0 4px 16px rgba(28,43,39,.045);position:relative;overflow:hidden}
+.daycard .idx{width:44px;height:44px;flex:0 0 44px;border-radius:12px;background:#F2EFE7;
+  display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;
+  color:#B9B2A2;font-family:"Songti SC","SimSun",serif}
+.daycard.done .idx{background:#2E6E62;color:#fff}
+.daycard.now{border-color:rgba(200,160,99,.5);background:#FFFDF7}
+.daycard.now .idx{background:#C8A063;color:#fff}
+.daycard .ttl{font-size:15.5px;font-weight:600;letter-spacing:.02em}
+.daycard .sub{font-size:11.5px;color:#9AA7A2;letter-spacing:.08em;margin-top:2px}
+.daycard .st{font-size:11px;color:#C8A063;font-weight:600}
+.daycard.lock{opacity:.55}
+
+/* ---------- 任务页 ---------- */
+.steps{display:flex;gap:8px;padding:0 20px 4px}
+.steps i{flex:1;height:3px;border-radius:3px;background:rgba(28,43,39,.1)}
+.steps i.on{background:#2E6E62}
+.steps i.cur{background:#C8A063}
+.qhead{font-size:11px;letter-spacing:.24em;color:#C8A063;font-weight:600;margin-bottom:10px}
+.qtext{font-size:18px;line-height:1.62;font-weight:600;letter-spacing:.01em}
+.opts{margin-top:16px}
+.opt{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid rgba(28,43,39,.09);
+  border-radius:14px;padding:14px 15px;margin-bottom:10px;cursor:pointer;
+  transition:border-color .15s,background .2s,transform .1s}
+.opt:active{transform:scale(.99)}
+.opt .k{width:22px;height:22px;flex:0 0 22px;border-radius:11px;border:1px solid rgba(28,43,39,.22);
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:#7C8A85;font-weight:600}
+.opt .v{font-size:14.5px;line-height:1.55}
+.opt.sel{border-color:#2E6E62;background:#F4F9F7}
+.opt.sel .k{background:#2E6E62;border-color:#2E6E62;color:#fff}
+.opt.ok{border-color:#2E6E62;background:#F4F9F7}
+.opt.bad{border-color:#C2703F;background:#FDF6F1}
+.opt.bad .k{border-color:#C2703F;color:#C2703F}
+.opt.dim{opacity:.6}
+.fate{margin-top:12px;background:#FBF8F1;border-left:3px solid #C8A063;border-radius:0 12px 12px 0;
+  padding:13px 15px;font-size:13.5px;line-height:1.7;color:#4A5754}
+.fate b{color:#8A5A2B;font-weight:600}
+.why{margin-top:10px;font-size:12.5px;color:#7C8A85;line-height:1.7}
+.lock-tip{font-size:12px;color:#C2703F;margin-top:10px}
+
+/* ---------- 结果 ---------- */
+.score{text-align:center;padding:26px 0 8px}
+.score b{font-size:54px;line-height:1;font-family:"Songti SC","SimSun",serif;color:#2E6E62}
+.score span{display:block;font-size:11px;letter-spacing:.24em;color:#9AA7A2;margin-top:8px}
+.badge{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.badge i{width:56px;height:56px;border-radius:50%;background:#2E6E62;color:#F3EEE2;
+  display:flex;align-items:center;justify-content:center;font-size:10px;line-height:1.25;
+  text-align:center;font-style:normal;letter-spacing:.02em;padding:6px}
+.badge i.off{background:#EDE8DC;color:#B9B2A2}
+
+/* ---------- 我的 ---------- */
+.grid2{display:flex;gap:11px}
+.stat{flex:1;background:#fff;border-radius:16px;padding:16px;border:1px solid rgba(28,43,39,.05)}
+.stat b{font-size:26px;font-family:"Songti SC","SimSun",serif;color:#1C2B27}
+.stat span{display:block;font-size:11px;color:#9AA7A2;letter-spacing:.12em;margin-top:4px}
+.badges{display:flex;flex-wrap:wrap;gap:9px;margin-top:6px}
+.badges i{width:62px;height:62px;border-radius:14px;background:#fff;border:1px solid rgba(28,43,39,.08);
+  display:flex;align-items:center;justify-content:center;text-align:center;font-size:10.5px;
+  font-style:normal;color:#B9B2A2;line-height:1.3;padding:6px}
+.badges i.on{background:#2E6E62;color:#F3EEE2;border-color:#2E6E62}
+.note{width:100%;border:1px solid rgba(28,43,39,.12);border-radius:12px;padding:12px;
+  font-family:inherit;font-size:14px;line-height:1.6;background:#fff;color:#1C2B27;resize:none;outline:none}
+.note:focus{border-color:#2E6E62}
+
+/* ---------- 底部导航 ---------- */
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;z-index:40;width:100%;max-width:480px;
+  background:rgba(255,255,255,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border-top:1px solid rgba(28,43,39,.07);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+.nav a{flex:1;text-align:center;font-size:10.5px;letter-spacing:.1em;color:#A9B4B0;
+  text-decoration:none;padding:4px 0;cursor:pointer}
+.nav a b{display:block;font-size:18px;line-height:1.1;font-weight:400;margin-bottom:3px}
+.nav a.on{color:#2E6E62;font-weight:600}
+
+/* ---------- 海报层 ---------- */
+.mask{position:fixed;inset:0;background:rgba(20,28,26,.62);z-index:60;display:flex;
+  align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .22s}
+.mask.on{opacity:1;pointer-events:auto}
+.poster-wrap{max-width:100%;max-height:100%;overflow:auto;text-align:center}
+.poster-wrap img{width:100%;max-width:320px;border-radius:12px;display:block;margin:0 auto;
+  box-shadow:0 18px 50px rgba(0,0,0,.4)}
+.poster-wrap p{color:#EFE9DB;font-size:12px;margin-top:12px;letter-spacing:.06em}
+.poster-wrap .close{margin-top:10px;background:transparent;border:1px solid rgba(255,255,255,.4);
+  color:#fff;border-radius:20px;padding:8px 22px;font-size:13px;font-family:inherit}
+
+/* ---------- 动效 ---------- */
+.view{animation:in .34s cubic-bezier(.22,.8,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pop{animation:pop .36s cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
+.fade-in{animation:fi .3s ease both}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand">文明七日修习<small>修身 · 打卡</small></div>
+    <div class="chip"><b id="scoreChip">0</b> 修养值</div>
+  </div>
+  <div id="view">
+    <div class="hero" style="padding:26px 20px">
+      <div class="kicker">YIBAN · 轻应用</div>
+      <h1 class="serif">文明<em>七日</em>修习</h1>
+      <p>把“文明”拆成二十一个今天就能做到的小动作。</p>
+      <div class="card" style="margin-top:18px;padding:16px">
+        <p class="muted" style="line-height:1.8">
+          如果这一页只显示这段文字、没有出现“开始第 1 天”，说明当前打开方式没有执行脚本。<br>
+          请用 <b>Edge / Chrome / 手机浏览器</b> 重新打开本文件（右键 → 打开方式 → Microsoft Edge）。
+        </p>
+      </div>
+    </div>
+    <noscript>
+      <div class="pad"><div class="card" style="margin-top:10px">
+        <p class="muted">你的浏览器已禁用 JavaScript，本应用无法运行。请开启后重试。</p>
+      </div></div>
+    </noscript>
+  </div>
+  <div class="nav">
+    <a data-go="home" class="on"><b>◉</b>修习</a>
+    <a data-go="week"><b>◈</b>七日</a>
+    <a data-go="me"><b>◎</b>我的</a>
+  </div>
+</div>
+<div class="mask" id="mask">
+  <div class="poster-wrap">
+    <img id="posterImg" alt="修身帖">
+    <p>长按图片可保存，分享到班级群</p>
+    <button class="close" data-go="close">收起</button>
+  </div>
+</div>
+<script>
+/* =========================================================================
+   文明七日修习 · 修身打卡
+   单文件 H5 轻应用：无外部依赖、可离线、适配易班 App 内置浏览器
+   ========================================================================= */
+(function () {
+  "use strict";
+
+  var CONFIG = {
+    school: "广州商学院",
+    slogan: "把“文明”拆成二十一个今天就能做到的小动作",
+    yiban: { enabled: false }   /* 接入易班 JSAPI 后置为 true */
+  };
+
+  /* ------------------------------ 内容数据 ------------------------------ */
+  var DAYS = [
+    {
+      n: 1, tag: "宿舍", title: "熄灯之后", badge: "熄灯之后",
+      desc: "一天里最容易失守的，是熄灯后的那半小时。",
+      quiz: {
+        q: "室友已经入睡，你还要赶一份作业。下列做法最得体的是？",
+        opts: ["把大灯打开，效率优先", "只开台灯并把光调向自己一侧，动作放轻", "外放白噪音，帮助自己集中", "把室友叫起来一起熬"],
+        a: 1,
+        why: "文明不是牺牲自己，而是在满足自己的同时，把他人的影响降到最小。"
+      },
+      scene: {
+        q: "22:40，家里打来视频。走廊很静，室友在复习。你会——",
+        opts: [
+          { t: "在寝室开免提聊十分钟", f: "室友默默戴上了耳机。你得到了十分钟的畅快，失去了一晚的安宁。", s: 20 },
+          { t: "走到楼道小声讲，控制在三分钟", f: "妈妈听清了你的近况，室友的翻书声也没有停。", s: 40 },
+          { t: "发条消息说“明天再聊”", f: "你把想说的话咽了回去，第二天却也没有再打。", s: 24 }
+        ],
+        best: 1
+      },
+      act: { q: "今晚 23:00 前，把手机调成静音，并把明天的书准备好。", hint: "小动作，但能改变一整晚。" }
+    },
+    {
+      n: 2, tag: "课堂", title: "迟到的那三分钟", badge: "轻推后门",
+      desc: "守时是一种修养，迟到之后的处理方式也是。",
+      quiz: {
+        q: "上课铃响时你还在楼下，教室的后门已经关上。最合适的做法是？",
+        opts: ["从后门快速推门进去，尽量不发声", "这节不去了，等下一节再来", "敲门并大声说明迟到的原因", "在门口等到下课再进去"],
+        a: 0,
+        why: "把对课堂的干扰降到最低，并在课后主动向老师说明，比“解释”更重要。"
+      },
+      scene: {
+        q: "课上手机震动，是社团群在催一份表格。你会——",
+        opts: [
+          { t: "低头回一句“收到”，顺便看完消息", f: "你错过了老师强调的重点，也把“随时被打断”写进了自己的习惯。", s: 18 },
+          { t: "记在便签上，下课后统一处理", f: "表格没有耽误，笔记也完整。你把注意力留在了它该在的地方。", s: 40 },
+          { t: "直接静音，课后再解释", f: "你专注了一整节课，但对方等了两个小时。", s: 30 }
+        ],
+        best: 1
+      },
+      act: { q: "今天上课前，把手机放进包里或调成勿扰。", hint: "一节课的完整，比十条消息更值钱。" }
+    },
+    {
+      n: 3, tag: "食堂", title: "一米线", badge: "一米线",
+      desc: "排队时的那一步距离，是给陌生人的体面。",
+      quiz: {
+        q: "打饭时，前面同学还在犹豫点什么菜。你应该？",
+        opts: ["紧跟在他身后，随时准备上前", "站在一米线外等，等他离开再上前", "直接绕到旁边窗口插队", "大声提醒他快点"],
+        a: 1,
+        why: "一米线不是形式，它让每个人都有一点不被打扰的余地。"
+      },
+      scene: {
+        q: "你打了三个菜，吃到一半发现吃不完。你会——",
+        opts: [
+          { t: "剩下就走", f: "餐盘收走时，剩菜称重记在了“光盘行动”的公示屏上。", s: 16 },
+          { t: "打包带走，晚上接着吃", f: "你多花了一块钱，但没有浪费一份粮食。", s: 32 },
+          { t: "把这一份吃完，下次少打一个菜", f: "你吃完了，也记住了自己的饭量。", s: 40 }
+        ],
+        best: 2
+      },
+      act: { q: "今天做到“光盘”，并把餐盘、餐具放回回收处。", hint: "节约不是口号，是一次点菜的分寸。" }
+    },
+    {
+      n: 4, tag: "网络", title: "转发之前", badge: "转发之前",
+      desc: "屏幕背后也是人，键盘上也有重量。",
+      quiz: {
+        q: "群里流传一条“某食堂吃出异物”的消息，没有来源。你会？",
+        opts: ["先转到自己班群提醒同学", "不转发，先向学校后勤或官方渠道求证", "在群里跟着吐槽两句", "截图发到朋友圈求扩散"],
+        a: 1,
+        why: "未核实的信息一旦扩散，伤害往往先于真相到达。"
+      },
+      scene: {
+        q: "你看到一位同学在评论区被围攻。你会——",
+        opts: [
+          { t: "围观，不发表意见", f: "屏幕那头的人独自撑了一整晚。围观也是一种默许。", s: 18 },
+          { t: "跟着玩梗，反正大家都在说", f: "你的一句话被截图转发，成了压垮她的那一根。", s: 12 },
+          { t: "私信当事人，并把不当言论举报", f: "她回了一个“谢谢”。有些支撑，只需要一个人先站出来。", s: 40 }
+        ],
+        best: 2
+      },
+      act: { q: "今天转发任何消息前，先问三句：真的吗？有来源吗？会造成伤害吗？", hint: "慢三秒，是一种网络修养。" }
+    },
+    {
+      n: 5, tag: "公共空间", title: "一扇门", badge: "扶门的人",
+      desc: "公共空间的文明，藏在很小的动作里。",
+      quiz: {
+        q: "图书馆里你的电话响了。最合适的做法是？",
+        opts: ["接起来小声说", "立刻静音，走到馆外的走廊再接", "直接挂断，等晚上再回", "戴上耳机在座位上接"],
+        a: 1,
+        why: "静音是第一步，离开是第二步——两步都做到，才不打扰任何人。"
+      },
+      scene: {
+        q: "你抱着一摞书走向电梯，后面有位老师也在赶时间。你会——",
+        opts: [
+          { t: "自己先上，按住开门键等她", f: "她道了谢，电梯里的气氛忽然松了一点。", s: 34 },
+          { t: "侧身让老师先走，并帮她按住门", f: "“同学你先。”一个小小的礼让，让整趟电梯都安静了下来。", s: 40 },
+          { t: "装作没看见，赶紧挤进去", f: "门关上了，你在电梯里有点不自在。", s: 14 }
+        ],
+        best: 1
+      },
+      act: { q: "今天为身后的人扶一次门或按住一次电梯。", hint: "你扶住的不是门，是别人对你的印象。" }
+    },
+    {
+      n: 6, tag: "礼仪", title: "提前十分钟", badge: "提前十分钟",
+      desc: "仪容是给他人的尊重，守时是给自己的信用。",
+      quiz: {
+        q: "你和老师约好下午三点，但预计会迟到五分钟。最得体的做法是？",
+        opts: ["到了再解释，反正只迟到五分钟", "提前发消息说明，并给出新的到达时间", "请同学帮忙带个话", "直接不去了，改天再说"],
+        a: 1,
+        why: "让别人对你有预期，是成年人最基本的礼貌。"
+      },
+      scene: {
+        q: "班级合影，你穿着拖鞋和睡衣外套就来了。你会——",
+        opts: [
+          { t: "站到最后一排，尽量不露出来", f: "照片定格了，但你还是在洗出来的合影里认出了那双拖鞋。", s: 24 },
+          { t: "向同学借一件衬衫换上，整理好再入镜", f: "照片里的你，和站在队列里的你，都更像“准备好了”的样子。", s: 40 },
+          { t: "干脆不参加合影", f: "班级相册里少了一个人，也少了一次被记住的机会。", s: 18 }
+        ],
+        best: 1
+      },
+      act: { q: "今天对三个人认真说“谢谢”，并看着对方的眼睛。", hint: "目光相接的那一秒，话才有分量。" }
+    },
+    {
+      n: 7, tag: "修身", title: "慎独", badge: "慎独",
+      desc: "没人看见的时候，你才是真正的你。",
+      quiz: {
+        q: "“慎独”的意思是？",
+        opts: ["一个人独处时要格外小心", "没有人看见的时候，依然按规矩做事", "不合群也要坚持自己", "独自完成任务，不依赖他人"],
+        a: 1,
+        why: "修养的最高处，不是被管出来的，是没人管的时候仍然守得住。"
+      },
+      scene: {
+        q: "深夜，教学楼只剩你一个人，洗手间的灯还亮着。你会——",
+        opts: [
+          { t: "反正不是我开的，不管", f: "灯亮了一整夜。没有人知道是谁开的，也没有人记得是谁关的。", s: 16 },
+          { t: "顺手关掉，再带上门", f: "你什么都没得到，除了第二天走进这栋楼时的一点踏实。", s: 40 },
+          { t: "拍张照发群里吐槽", f: "你得到了一条点赞，灯还是亮着。", s: 12 }
+        ],
+        best: 1
+      },
+      act: { q: "写下你的一条“修身约定”，它会被保存在这台设备上。", hint: "写下来，才算真的开始。", input: true }
+    }
+  ];
+
+  /* ------------------------------ 状态存储 ------------------------------ */
+  var KEY = "wmxy_state_v1";
+  var mem = null;
+  function load() {
+    if (mem) return mem;
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { s = null; }
+    if (!s || typeof s !== "object") s = {};
+    s.done = s.done || {};
+    s.acts = s.acts || {};
+    s.nick = s.nick || "";
+    mem = s;
+    return mem;
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(load())); } catch (e) {}
+  }
+  function dayScore(n) {
+    var d = load().done[n];
+    return d ? (d.quiz || 0) + (d.scene || 0) + (d.act || 0) : 0;
+  }
+  function total() {
+    var t = 0, i;
+    for (i = 1; i <= 7; i++) t += dayScore(i);
+    return t;
+  }
+  function doneDays() {
+    var c = 0, i;
+    for (i = 1; i <= 7; i++) { var d = load().done[i]; if (d && d.quiz && d.scene && d.act) c++; }
+    return c;
+  }
+  function currentDay() {
+    var i;
+    for (i = 1; i <= 7; i++) if (dayScore(i) < 100) return i;
+    return 7;
+  }
+  function setPart(n, part, val) {
+    var s = load();
+    s.done[n] = s.done[n] || {};
+    s.done[n][part] = val;
+    save();
+  }
+
+  /* ------------------------------ 视图路由 ------------------------------ */
+  var app = document.getElementById("view");
+  var nav = document.querySelectorAll(".nav a");
+
+  function setNav(name) {
+    var i;
+    for (i = 0; i < nav.length; i++) {
+      var g = nav[i].getAttribute("data-go");
+      if (g === name) nav[i].className = "on"; else nav[i].className = "";
+    }
+  }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function ring(pct) {
+    var r = 40, c = 2 * Math.PI * r, off = c * (1 - pct / 100);
+    return '<svg width="92" height="92" viewBox="0 0 92 92">' +
+      '<circle cx="46" cy="46" r="' + r + '" fill="none" stroke="#EDE8DC" stroke-width="7"/>' +
+      '<circle cx="46" cy="46" r="' + r + '" fill="none" stroke="#2E6E62" stroke-width="7" stroke-linecap="round" ' +
+      'stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/></svg>';
+  }
+
+  /* ------------------------------ 首页 ------------------------------ */
+  function vHome() {
+    var t = total(), d = currentDay(), day = DAYS[d - 1], sc = dayScore(d);
+    var pct = Math.round(t / 700 * 100);
+    var h = '<div class="view"><div class="hero">' +
+      '<div class="kicker">YIBAN · 轻应用</div>' +
+      '<h1 class="serif">文明<em>七日</em>修习</h1>' +
+      '<p>' + CONFIG.slogan + '</p>' +
+      '<div class="ringbox"><div class="ring">' + ring(pct) +
+      '<div class="num"><b>' + t + '</b><span>/ 700</span></div></div>' +
+      '<div class="today"><div class="lab">第 ' + d + ' 天 · ' + day.tag + '</div>' +
+      '<div class="tt">' + day.title + '</div><div class="ds">' + day.desc + '</div></div></div>' +
+      '</div><div class="pad">' +
+      '<button class="btn" data-go="day/' + d + '">' + (sc > 0 ? "继续第 " + d + " 天 · " + sc + " 分" : "开始第 " + d + " 天") + '</button>' +
+      '<div class="sec-title">七日目录</div>';
+    for (var i = 1; i <= 7; i++) {
+      var dd = DAYS[i - 1], ds = dayScore(i);
+      var cls = ds >= 100 ? "daycard done" : (i === d ? "daycard now" : (i > d ? "daycard lock" : "daycard"));
+      h += '<div class="' + cls + '" data-go="day/' + i + '">' +
+        '<div class="idx">' + i + '</div><div style="flex:1">' +
+        '<div class="ttl">' + dd.title + '</div><div class="sub">' + dd.tag + '　·　' + dd.badge + '</div></div>' +
+        '<div class="st">' + (ds >= 100 ? "已完成" : (ds > 0 ? ds + " 分" : (i > d ? "待解锁" : "进行中"))) + '</div></div>';
+    }
+    h += '<div class="hr"></div><p class="muted" style="line-height:1.8">' +
+      '每天三关：<b>知</b>（一道判断题）· <b>行</b>（一个真实情景）· <b>省</b>（一个今天就能做的小动作）。<br>' +
+      '不排名、不攀比，只记录你为自己攒下的修养值。</p>' +
+      '<div style="height:24px"></div></div></div>';
+    return h;
+  }
+
+  /* ------------------------------ 七日 ------------------------------ */
+  function vWeek() {
+    var h = '<div class="view"><div class="pad" style="padding-top:22px">' +
+      '<div class="kicker" style="font-size:10px;letter-spacing:.3em;color:#C8A063;font-weight:600">SEVEN DAYS</div>' +
+      '<h2 class="serif" style="font-size:24px;margin:8px 0 4px">七日修习地图</h2>' +
+      '<p class="muted" style="margin-bottom:18px">一天一个主题，七天拼出一整套修养。</p>';
+    for (var i = 1; i <= 7; i++) {
+      var d = DAYS[i - 1], ds = dayScore(i), cur = currentDay();
+      var cls = ds >= 100 ? "daycard done" : (i === cur ? "daycard now" : (i > cur ? "daycard lock" : "daycard"));
+      h += '<div class="' + cls + '" data-go="day/' + i + '">' +
+        '<div class="idx">' + i + '</div><div style="flex:1">' +
+        '<div class="ttl">' + d.title + '</div>' +
+        '<div class="sub">' + d.tag + '　·　' + d.desc + '</div></div>' +
+        '<div class="st">' + (ds >= 100 ? "✓" : (i > cur ? "锁" : "→")) + '</div></div>';
+    }
+    h += '<div style="height:20px"></div></div></div>';
+    return h;
+  }
+
+  /* ------------------------------ 每日任务 ------------------------------ */
+  function bar(i, step) {
+    var c = i < step ? "on" : (i === step ? "cur" : "");
+    return '<i class="' + c + '"></i>';
+  }
+
+  function vDay(n) {
+    var d = DAYS[n - 1], st = load().done[n] || {};
+    var step = st.act ? 4 : (st.scene ? 3 : (st.quiz ? 2 : 1));
+    var h = '<div class="view"><div style="padding:18px 20px 8px">' +
+      '<div class="qhead">DAY ' + n + '　·　' + d.tag + '</div>' +
+      '<h2 class="serif" style="font-size:26px;margin-bottom:6px">' + d.title + '</h2>' +
+      '<p class="muted">' + d.desc + '</p></div>' +
+      '<div class="steps">' + bar(1, step) + bar(2, step) + bar(3, step) + '</div>' +
+      '<div class="pad" style="padding-top:16px">';
+    if (step === 1) {
+      h += '<div class="qhead">知 · 判断题</div><div class="qtext">' + d.quiz.q + '</div><div class="opts">';
+      for (var i = 0; i < d.quiz.opts.length; i++) {
+        h += '<div class="opt" data-quiz="' + i + '"><span class="k">' + "ABCD".charAt(i) + '</span>' +
+          '<span class="v">' + d.quiz.opts[i] + '</span></div>';
+      }
+      h += '</div><div id="quizfb"></div>';
+    } else if (step === 2) {
+      h += '<div class="qhead">行 · 情景模拟</div><div class="qtext">' + d.scene.q + '</div><div class="opts">';
+      for (var j = 0; j < d.scene.opts.length; j++) {
+        h += '<div class="opt" data-scene="' + j + '"><span class="k">' + (j + 1) + '</span>' +
+          '<span class="v">' + d.scene.opts[j].t + '</span></div>';
+      }
+      h += '</div><div id="scenefb"></div>';
+    } else if (step === 3) {
+      h += '<div class="qhead">省 · 今日打卡</div><div class="qtext" style="font-size:16.5px">' + d.act.q + '</div>' +
+        '<p class="muted" style="margin-top:8px">' + d.act.hint + '</p>';
+      if (d.act.input) {
+        h += '<textarea class="note" id="actNote" rows="3" placeholder="例如：每晚十一点前关灯，不影响室友。">' +
+          esc(load().acts[n] || "") + '</textarea>';
+      }
+      h += '<div id="actfb"></div>' +
+        '<button class="btn" data-act="1">我做到了 · 完成第 ' + n + ' 天</button>';
+    } else {
+      h += '<div class="qhead">已 完 成</div>' +
+        '<div class="qtext" style="font-size:17px">今天的三关都通过了。</div>' +
+        '<p class="muted" style="margin-top:8px">' + d.act.hint + '</p>' +
+        '<button class="btn gold" data-go="poster/' + n + '">生成今天的「修身帖」</button>' +
+        '<button class="btn" data-go="' + (n < 7 ? "day/" + (n + 1) : "me") + '">' +
+        (n < 7 ? "进入第 " + (n + 1) + " 天" : "回到我的修习") + '</button>' +
+        '<button class="btn ghost" data-go="result/' + n + '">查看结算</button>';
+    }
+    h += '<div style="height:20px"></div></div></div>';
+    return h;
+  }
+
+  /* ------------------------------ 结算 ------------------------------ */
+  function vResult(n) {
+    var d = DAYS[n - 1], sc = dayScore(n), t = total(), dd = doneDays();
+    var h = '<div class="view"><div class="score"><b>' + sc + '</b><span>DAY ' + n + ' · 修养值</span></div>' +
+      '<div class="badge"><i class="' + (sc >= 100 ? "" : "off") + '">' + d.badge + '</i></div>' +
+      '<div class="pad" style="text-align:center;margin-top:6px"><p class="muted">' +
+      (sc >= 100 ? "今天的三关都完成了。修养不是一次考试，是每天多做到一点点。" : "还差一点点，回去把没做完的那一关补上吧。") +
+      '</p>' +
+      '<div class="hr"></div>' +
+      '<div class="grid2"><div class="stat"><b>' + t + '</b><span>总修养值</span></div>' +
+      '<div class="stat"><b>' + dd + '/7</b><span>完成天数</span></div></div>' +
+      '<button class="btn gold" data-go="poster/' + n + '">生成我的「修身帖」</button>' +
+      '<button class="btn ghost" data-go="' + (n < 7 ? "day/" + (n + 1) : "me") + '">' +
+      (n < 7 ? "进入第 " + (n + 1) + " 天" : "回到我的修习") + '</button>' +
+      '<button class="btn ghost" data-go="home">回到首页</button>' +
+      '<div style="height:26px"></div></div></div>';
+    return h;
+  }
+
+  /* ------------------------------ 我的 ------------------------------ */
+  function vMe() {
+    var t = total(), dd = doneDays(), h = '<div class="view"><div class="pad" style="padding-top:22px">' +
+      '<div class="kicker" style="font-size:10px;letter-spacing:.3em;color:#C8A063;font-weight:600">MY PRACTICE</div>' +
+      '<h2 class="serif" style="font-size:24px;margin:8px 0 16px">我的修习</h2>' +
+      '<div class="grid2"><div class="stat"><b>' + t + '</b><span>总修养值</span></div>' +
+      '<div class="stat"><b>' + dd + '/7</b><span>完成天数</span></div></div>' +
+      '<div class="sec-title">徽章墙</div><div class="badges">';
+    for (var i = 1; i <= 7; i++) {
+      var d = DAYS[i - 1];
+      h += '<i class="' + (dayScore(i) >= 100 ? "on" : "") + '">' + d.badge + '</i>';
+    }
+    h += '</div><div class="sec-title">我的修身约定</div>';
+    var note = load().acts[7] || "";
+    h += '<div class="card" style="padding:16px"><p style="font-size:14.5px;line-height:1.7;color:' +
+      (note ? "#1C2B27" : "#B9B2A2") + '">' + (note ? esc(note) : "还没有写。完成第 7 天，写下你的第一条约定。") + '</p></div>';
+    h += '<div class="sec-title">关于</div>' +
+      '<div class="card" style="padding:16px"><p class="muted" style="line-height:1.8">' +
+      '「文明七日修习」是一款轻量修身打卡应用：把校园文明拆成 7 天、21 个具体动作。' +
+      '数据仅保存在本机，不上传、不排名。<br><br>' +
+      CONFIG.school + '　·　“文明·修养·形象”主题教育</p></div>' +
+      '<button class="btn ghost" data-reset="1" style="margin-top:18px">清空本机记录</button>' +
+      '<div style="height:26px"></div></div></div>';
+    return h;
+  }
+
+  /* ------------------------------ 修身帖海报 ------------------------------ */
+  function drawPoster(n) {
+    var W = 640, H = 1000, cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    var g = cv.getContext("2d");
+    g.fillStyle = "#FAF7F0"; g.fillRect(0, 0, W, H);
+    g.fillStyle = "#1C2B27"; g.fillRect(0, 0, W, 8);
+    g.strokeStyle = "rgba(28,43,39,.08)"; g.lineWidth = 2;
+    g.strokeRect(30, 44, W - 60, H - 88);
+
+    g.fillStyle = "#C8A063"; g.font = "600 18px sans-serif"; g.textAlign = "center";
+    g.fillText("Y I B A N   ·   轻 应 用", W / 2, 100);
+
+    g.fillStyle = "#1C2B27"; g.font = "700 58px serif";
+    g.fillText("文明七日修习", W / 2, 180);
+    g.fillStyle = "#2E6E62"; g.font = "400 22px sans-serif";
+    g.fillText(CONFIG.slogan, W / 2, 222);
+
+    // 进度
+    var t = total(), pct = t / 700;
+    g.fillStyle = "#EDE8DC"; g.fillRect(90, 270, W - 180, 10);
+    g.fillStyle = "#2E6E62"; g.fillRect(90, 270, (W - 180) * pct, 10);
+    g.fillStyle = "#7C8A85"; g.font = "400 15px sans-serif"; g.textAlign = "left";
+    g.fillText("修养值", 90, 258);
+    g.textAlign = "right"; g.fillText(t + " / 700", W - 90, 258);
+
+    // 七个圆点
+    var cx0 = 90, gap = (W - 180) / 6, y = 330;
+    for (var i = 1; i <= 7; i++) {
+      var x = cx0 + gap * (i - 1);
+      g.beginPath(); g.arc(x, y, 13, 0, Math.PI * 2);
+      g.fillStyle = dayScore(i) >= 100 ? "#2E6E62" : "#E4DFD2"; g.fill();
+      if (dayScore(i) >= 100) {
+        g.strokeStyle = "#FAF7F0"; g.lineWidth = 2; g.stroke();
+      }
+      g.fillStyle = dayScore(i) >= 100 ? "#7C8A85" : "#B9B2A2";
+      g.font = "400 12px sans-serif"; g.textAlign = "center";
+      g.fillText("D" + i, x, y + 32);
+    }
+
+    // 今日箴言
+    var d = DAYS[n - 1];
+    g.fillStyle = "#F2EDE1"; g.fillRect(70, 410, W - 140, 300);
+    g.fillStyle = "#C8A063"; g.font = "600 15px sans-serif"; g.textAlign = "center";
+    g.fillText("DAY " + n + " · " + d.tag, W / 2, 452);
+    g.fillStyle = "#1C2B27"; g.font = "700 30px serif";
+    g.fillText(d.title, W / 2, 496);
+    g.fillStyle = "#4A5754"; g.font = "400 19px serif";
+    var words = d.desc;
+    if (words.length > 18) {
+      g.fillText(words.slice(0, 18), W / 2, 546);
+      g.fillText(words.slice(18), W / 2, 578);
+    } else {
+      g.fillText(words, W / 2, 546);
+    }
+    g.fillStyle = "#7C8A85"; g.font = "400 15px sans-serif";
+    g.fillText("完成 " + dayScore(n) + " / 100 分", W / 2, 660);
+
+    // 底部
+    g.fillStyle = "#1C2B27"; g.font = "600 17px sans-serif"; g.textAlign = "center";
+    g.fillText("我 在 练 习 成 为 一 个 更 体 面 的 人", W / 2, 790);
+    g.fillStyle = "#9AA7A2"; g.font = "400 14px sans-serif";
+    g.fillText(CONFIG.school + "　·　“文明·修养·形象”主题教育", W / 2, 830);
+    g.fillStyle = "#C8A063"; g.font = "400 13px sans-serif";
+    g.fillText("长 按 保 存 · 分 享 到 班 级 群", W / 2, 900);
+    return cv.toDataURL("image/png");
+  }
+
+  function showPoster(n) {
+    document.getElementById("posterImg").src = drawPoster(n);
+    document.getElementById("mask").className = "mask on";
+  }
+
+  /* ------------------------------ 交互 ------------------------------ */
+  function closestAttr(node, root, names) {
+    while (node && node !== root) {
+      if (node.getAttribute) {
+        for (var i = 0; i < names.length; i++) {
+          if (node.getAttribute(names[i]) !== null) return node;
+        }
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  function bind(el) {
+    el.addEventListener("click", function (e) {
+      var node, go;
+
+      node = closestAttr(e.target, el, ["data-go"]);
+      if (node) {
+        go = node.getAttribute("data-go");
+        if (go === "close") { document.getElementById("mask").className = "mask"; return; }
+        if (go === "refresh") { render(); return; }
+        if (go.indexOf("poster/") === 0) { showPoster(parseInt(go.split("/")[1], 10)); return; }
+        location.hash = "#" + go;
+        return;
+      }
+
+      node = closestAttr(e.target, el, ["data-reset"]);
+      if (node) {
+        if (confirm("确定清空本机记录？此操作不可恢复。")) {
+          mem = { done: {}, acts: {}, nick: "" }; save(); render();
+        }
+        return;
+      }
+
+      var m = location.hash.match(/#day\/(\d)/);
+      var n = m ? parseInt(m[1], 10) : 1;
+
+      node = closestAttr(e.target, el, ["data-quiz"]);
+      if (node) {
+        var q = node.getAttribute("data-quiz");
+        var d = DAYS[n - 1], pick = parseInt(q, 10), right = (pick === d.quiz.a);
+        var opts = el.querySelectorAll("[data-quiz]");
+        var i;
+        for (i = 0; i < opts.length; i++) {
+          var idx = parseInt(opts[i].getAttribute("data-quiz"), 10);
+          opts[i].className = "opt" + (idx === d.quiz.a ? " ok" : (idx === pick ? " bad" : " dim"));
+        }
+        document.getElementById("quizfb").innerHTML =
+          '<div class="fade-in"><div class="fate"><b>' + (right ? "判断正确。" : "再想一想。") + '</b> ' + d.quiz.why + '</div>' +
+          '<button class="btn" data-go="refresh">进入下一关 · 情景模拟</button></div>';
+        setPart(n, "quiz", right ? 30 : 12);
+        refreshChip();
+        return;
+      }
+
+      node = closestAttr(e.target, el, ["data-scene"]);
+      if (node) {
+        var s = node.getAttribute("data-scene");
+        var dd = DAYS[n - 1], p = parseInt(s, 10), best = (p === dd.scene.best);
+        var so = el.querySelectorAll("[data-scene]");
+        var j;
+        for (j = 0; j < so.length; j++) {
+          var k = parseInt(so[j].getAttribute("data-scene"), 10);
+          so[j].className = "opt" + (k === p ? (best ? " ok" : " bad") : " dim");
+        }
+        document.getElementById("scenefb").innerHTML =
+          '<div class="fade-in"><div class="fate"><b>后果预演：</b>' + dd.scene.opts[p].f + '</div>' +
+          (best ? "" : '<div class="why">更妥当的做法：' + dd.scene.opts[dd.scene.best].t + '</div>') +
+          '<button class="btn" data-go="refresh">进入下一关 · 今日打卡</button></div>';
+        setPart(n, "scene", dd.scene.opts[p].s);
+        refreshChip();
+        return;
+      }
+
+      node = closestAttr(e.target, el, ["data-act"]);
+      if (node) {
+        var d7 = DAYS[n - 1];
+        if (d7.act.input) {
+          var ta = document.getElementById("actNote");
+          var v = ta ? ta.value.replace(/^\s+|\s+$/g, "") : "";
+          if (!v) { document.getElementById("actfb").innerHTML = '<div class="lock-tip">先写下一句，再完成打卡。</div>'; return; }
+          var st = load(); st.acts[n] = v; save();
+        }
+        setPart(n, "act", 30);
+        location.hash = "#result/" + n;
+        return;
+      }
+    });
+  }
+
+  function refreshChip() {
+    document.getElementById("scoreChip").innerHTML = total();
+  }
+
+  /* ------------------------------ 渲染 ------------------------------ */
+  function render() {
+    var h = location.hash || "#home", m, n;
+    if (m = h.match(/#day\/(\d)/)) { n = Math.min(7, Math.max(1, parseInt(m[1], 10))); app.innerHTML = vDay(n); setNav("week"); }
+    else if (m = h.match(/#result\/(\d)/)) { n = Math.min(7, Math.max(1, parseInt(m[1], 10))); app.innerHTML = vResult(n); setNav("week"); }
+    else if (h === "#week") { app.innerHTML = vWeek(); setNav("week"); }
+    else if (h === "#me") { app.innerHTML = vMe(); setNav("me"); }
+    else { app.innerHTML = vHome(); setNav("home"); }
+    refreshChip();
+    window.scrollTo(0, 0);
+  }
+
+  window.addEventListener("hashchange", render);
+
+  /* 顶部导航 */
+  (function () {
+    var i;
+    for (i = 0; i < nav.length; i++) {
+      nav[i].addEventListener("click", function () { location.hash = "#" + this.getAttribute("data-go"); });
+    }
+  })();
+
+  bind(app);
+  bind(document.getElementById("mask"));
+
+  /* 易班 JSAPI 预留：接入开放平台后自动取用户昵称 */
+  function initYiban() {
+    if (!CONFIG.yiban.enabled) return;
+    try {
+      if (window.YibanJSBridge && window.YibanJSBridge.getUserInfo) {
+        window.YibanJSBridge.getUserInfo(function (res) {
+          if (res && res.name) { var s = load(); s.nick = res.name; save(); }
+        });
+      }
+    } catch (e) {}
+  }
+
+  initYiban();
+  try {
+    render();
+  } catch (err) {
+    document.getElementById("view").innerHTML =
+      '<div class="pad" style="padding-top:30px"><div class="card">' +
+      '<p style="font-weight:600">页面出错了</p>' +
+      '<p class="muted" style="margin-top:6px;word-break:break-all">' + (err && err.message ? err.message : err) + '</p>' +
+      '</div></div>';
+  }
+})();
+</script>
+</body>
+</html>
+
+
+
